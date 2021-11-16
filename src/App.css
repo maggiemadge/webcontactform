@@ -1,6 +1,12 @@
 body{
 margin: 0;
 padding: 0;
-background-color:#1e88e5;
+background: url('C:/Users/mooletu/Downloads/webcontactform-master/webcontactform-master/src/Images/Call.jpg');   
+/* background-color:#1e88e5; */
 
 }
+/* bgImg{
+  background: url('C:/Users/mooletu/Downloads/webcontactform-master/webcontactform-master/src/Images/Call.jpg');   */
+  /* height: auto;
+  background-size: cover; */
+

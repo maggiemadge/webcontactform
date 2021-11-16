@@ -22,7 +22,24 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 
  const useStyles  = makeStyles ((theme)=>({
+  root: {
+    margin: 0,
+    padding: theme.spacing(2),
+  
+    '& .MuiTableCell-head': {
+      color: '#263238',
+      fontWeight: 700,
+    },
+   
+    '&  .MuiTableCell-head .MuiButton-text .MuiButton-label':{
+      fontWeight: 700,
+    },
 
+    '& .MuiToolbar-regular .MuiTypography-root.MuiTypography-h6': {
+      opacity: 0.3,
+      fontWeight: 700
+    }
+  },
     
     h1: {
       borderBottom: "1px solid white",
@@ -85,89 +102,105 @@ import DialogTitle from '@mui/material/DialogTitle';
 
  function AddContact(props){
     const classes =useStyles();
-    const [firstName, setFirstName]= useState("");
-    const [lastName, setLastName]= useState("");
-    const [email, setEmail]=useState("");
-    const [telephone, setTelephone]= useState("");
+    // const [firstName, setFirstName]= useState("");
+    // const [lastName, setLastName]= useState("");
+    // const [email, setEmail]=useState("");
+    // const [telephone, setTelephone]= useState("");
     const [loader, setLoader]= useState(false);
-    const [formName, setFormName]= useState('Edit')
-    const [userData, setUserData]= useState([]);
+    const [userDetails, setUserDetails]= useState("");
+    const [allDetails, setAllDetails] = useState({})
+    
+    const [states, setStates]= useState({
+      firstName:'',
+      lastName:'',
+      email:'',
+      telephone:''
+    })
 
-    // const initialStates={
-    //     email:'',
-    //    firstName:'',
-    //    lastName:'',
-    //    telephone:'',
-    //     textButton: 'Save',
-    //     formName:'Edit'
-    // }
+    // 
+    function checkId(userInfo) {
+      return userInfo.id === props.id;
+    }
 
-    // const initialValues={
-    //    email:'',
-    //    firstName:'',
-    //    lastName:'',
-    //    telephone:'',
-    // }
+   useEffect(() =>{
+        if (props.open ===false){
+          setStates({
+            firstName:'',
+            lastName:'',
+            telephone:'',
+            email:''
+
+          })
+
+          // setFirstName("")
+          // setLastName('')
+          // setEmail('')
+          // setTelephone('')
+        }else  {
+          console.log(props.allUserInfo)
+          // a variable that holds alluserinfo and check if the id matches what's in the object
+         let user= props.allUserInfo.find(checkId);   
+         console.log(user.firstName);
+
+         setStates({
+          firstName:(user.firstName),
+          lastName:(user.lastName),
+          email:(user.email),
+          telephone:(user.telephone)
+         })
+           
+         
+
+        //  setFirstName(user.firstName)
+        //  setLastName(user.lastName)
+        //  setEmail(user.email)
+        //  setTelephone(user.telephone)
+
+         
+          console.log(userDetails)
+        }
+       
+   },[props.open])
 
 
-//    useEffect(() =>{
-//         if (props.currentId ="")
-//         state({...
-//         setFirstName, setLastName, setEmail, setTelephone})  
-//         else   
-//         state({... setFirstName, setLastName, setEmail, setTelephone})
-//    },[props.currentId, props.userData])
+   function handleChange(evt) {
+    const value = evt.target.value;
+    setStates({
+      ...states,
+      [evt.target.name]: value
+    });
+  }
 
-  
-useEffect(() =>{
-    // debugger
-    console.log(props.open)
-},[props.open])
-
- 
 
    const handleSubmit=(e)=>{
       e.preventDefault();
       setLoader(true);
 
-      if (firstName === "" || lastName ==="" || telephone ==="" || email ===""){
-        alert("Field cannot be empty")
-        setLoader(false)
-        return;
-      }
-      
-     db.collection('contacts').add({
-       firstName:firstName,
-       lastName:lastName,
-       email:email,
-       telephone:telephone
-      })
+      db.collection('contacts').doc(props.id).update(states
+      //   {
+      //   firstName:firstName,
+      //   telephone: telephone,
+      //   lastName: lastName,
+      //   email:email
+      // }
+      )
       .then(()=>{
-        alert("Contact successfully saved 👍")
-        setLoader(false);
-      })
-      .catch((error) =>{
-        alert(error.message)
-        setLoader(false);
-      });
-      setFirstName("");
-      setLastName("");
-      setTelephone("");
-      setEmail("");
+            alert("Contact was successfully updated 👍")
+            setLoader(false);
+          })
+          .catch((error) =>{
+            alert(error.message)
+            setLoader(false);
+          });
+         
    }
 
  return (
 
      <>
-     {/* <Dialog  open={props.open}>
-              <DialogTitle>Set backup account</DialogTitle>
-              </Dialog> */}
      <Dialog 
      aria-labelledby="customized-dialog-title"
     open={props.open}
-    // style={{
-    //     zIndex: 1000,
-    //     }}
         className={classes.Dialog}
         fullWidth={true}
         TransitionComponent={Transition}
@@ -179,6 +212,7 @@ useEffect(() =>{
     direction="column"
     alignItems="center"
     justify="center"
+
     style={{ minHeight: '100vh' }}
     >
         <Card sx={{ minWidth: 305, minHeight: 400, marginTop:"8rem"}}> 
@@ -187,23 +221,24 @@ useEffect(() =>{
                 style={{color: blue[500], fontSize: 50, marginLeft: 10, marginBottom: 10 }}/></div>
           <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
         <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-        <TextField id="input-with-sx" label="First Name" variant="standard" value={firstName} 
-        onChange={(e)=>setFirstName(e.target.value)}/>
+        <TextField id="input-with-sx"  name='firstName' label="First Name" variant="standard" value={states.firstName} 
+        onChange={handleChange}
+        />
       </Box>
        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
         <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-        <TextField id="input-with-sx" label="Last Name" variant="standard" value={lastName}
-        onChange={(e)=>setLastName(e.target.value)} />
+        <TextField id="input-with-sx" name='lastName'label="Last Name" variant="standard" value={states.lastName}
+        onChange={handleChange} />
       </Box>
        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
         <MdPhone sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-        <TextField id="input-with-sx" label="Telephone" variant="standard" value={telephone} 
-        onChange={(e)=>setTelephone(e.target.value)} />
+        <TextField id="input-with-sx" name='telephone' label="Telephone" variant="standard" value={states.telephone} 
+        onChange={handleChange} />
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
         <EmailIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-        <TextField id="input-with-sx" label="Email" variant="standard" value={email}
-        onChange={(e)=>setEmail(e.target.value)} />
+        <TextField id="input-with-sx" name='email'label="Email" variant="standard" value={states.email}
+        onChange={handleChange} />
       </Box>        
         </CardContent>
         <Button
