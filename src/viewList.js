@@ -66,13 +66,6 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: "flex-end",
     },
   },
-  // list: {
-  //   display: "flex",
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   listStyle: "none",
-  //   marginTop:'1rem'
-  // },
 
   list: {
     display: "flex",
